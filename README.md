@@ -14,6 +14,8 @@ Hacker News (Show HN) --> filter for AI --> clean titles --> dedupe (SQLite)
 
 Runs automatically once a day via GitHub Actions — no server to maintain.
 
+Live link: https://ai-tool-tracker-cs9ztmyxp8ih3d3lppydm3.streamlit.app/
+
 ## Tech stack
 - **Data source**: Hacker News Algolia API (free, no key)
 - **LLM**: Google Gemini (`gemini-3.5-flash-lite`) — free tier, no credit card required
