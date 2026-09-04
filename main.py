@@ -1,12 +1,22 @@
+import os
 import time
 from fetch_tools import fetch_new_ai_tools
-from database import init_db, is_new, save_tool
+from database import init_db, is_new, save_tool, add_subscriber
 from summarize import summarize_tool
-from telegram_notify import send_telegram_message
+from telegram_notify import poll_new_subscribers, broadcast_message
 
 
 def run():
     init_db()
+
+    owner_chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+    if owner_chat_id:
+        add_subscriber(owner_chat_id, "owner")
+
+    new_subs = poll_new_subscribers()
+    if new_subs:
+        print(f"Registered {new_subs} new subscriber(s)")
+
     tools = fetch_new_ai_tools(hours_back=24)
     print(f"Found {len(tools)} candidate launches")
 
@@ -30,11 +40,11 @@ def run():
             f"Category: {category}\n"
             f"Link: {tool['url']}"
         )
-        send_telegram_message(message)
+        broadcast_message(message)
         new_count += 1
-        time.sleep(1)  # be polite to the APIs
+        time.sleep(1)
 
-    print(f"Notified about {new_count} new tools")
+    print(f"Notified about {new_count} new tools (sent to all subscribers)")
 
 
 if __name__ == "__main__":
