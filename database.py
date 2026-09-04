@@ -57,6 +57,15 @@ def get_all_subscribers():
         return [r[0] for r in rows]
 
 
+def get_subscriber_details():
+    """Returns full subscriber records (chat_id, username, joined_at) for display."""
+    with closing(sqlite3.connect(DB_PATH)) as conn:
+        conn.row_factory = sqlite3.Row
+        rows = conn.execute(
+            "SELECT * FROM subscribers ORDER BY joined_at DESC"
+        ).fetchall()
+        return [dict(r) for r in rows]
+    
 def get_meta(key, default=None):
     with closing(sqlite3.connect(DB_PATH)) as conn:
         row = conn.execute("SELECT value FROM meta WHERE key = ?", (key,)).fetchone()

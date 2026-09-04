@@ -1,6 +1,7 @@
 import streamlit as st
 from database import init_db, get_all_tools
 from utils import clean_title
+from database import init_db, get_all_tools, get_subscriber_details
 
 st.set_page_config(page_title="AI Tool Tracker", page_icon="🤖", layout="wide")
 init_db()
@@ -79,11 +80,20 @@ if not tools:
     st.info("No tools tracked yet. Run `python main.py` once, or wait for the daily GitHub Action.")
     st.stop()
 
-col1, col2, col3 = st.columns(3)
+subscribers = get_subscriber_details()
+
+col1, col2, col3, col4 = st.columns(4)
 col1.metric("Tools tracked", len(tools))
 col2.metric("Categories", len(set(t["category"] for t in tools if t["category"])))
 col3.metric("Latest", tools[0]["created_at"][:10] if tools else "—")
+col4.metric("Subscribers", len(subscribers))
 
+with st.expander(f"👥 View {len(subscribers)} subscriber(s)"):
+    if not subscribers:
+        st.caption("No subscribers yet.")
+    else:
+        for s in subscribers:
+            st.write(f"**{s['username']}** — joined {s['joined_at'][:10]}")
 st.write("")
 
 search_col, filter_col = st.columns([2, 3])
