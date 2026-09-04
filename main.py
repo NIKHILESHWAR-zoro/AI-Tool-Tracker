@@ -16,6 +16,10 @@ def run():
             continue
 
         summary, category = summarize_tool(tool["title"], tool["url"])
+        if summary is None:
+            print(f"  Skipping '{tool['title']}' due to repeated API errors.")
+            continue
+
         tool["summary"] = summary
         tool["category"] = category
         save_tool(tool)
